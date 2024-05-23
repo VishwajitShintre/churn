@@ -21,23 +21,51 @@ model = joblib.load(model_path)
 #Import python scripts
 from preprocessing import preprocess
 
+# def main():
+import streamlit as st
+from PIL import Image
+import os
+
 def main():
-    #Setting Application title
     st.title('Telco Customer Churn Prediction App')
 
-      #Setting Application description
-    st.markdown("""
-     :dart:  This Streamlit app is made to predict customer churn in a ficitional telecommunication use case.
-    The application is functional for both online prediction and batch data prediction. \n
-    """)
-    st.markdown("<h3></h3>", unsafe_allow_html=True)
+    # Get the directory of the current script
+    current_dir = os.path.dirname(__file__)
+    image_path = os.path.join(current_dir, 'App.jpg')
 
-    #Setting Application sidebar default
-    image = Image.open('App.jpg')
-    add_selectbox = st.sidebar.selectbox(
-	"How would you like to predict?", ("Online", "Batch"))
-    st.sidebar.info('This app is created to predict Customer Churn')
-    st.sidebar.image(image)
+    # Check if the file exists before loading
+    if os.path.exists(image_path):
+        image = Image.open(image_path)
+        st.image(image, caption='App Image')
+    else:
+        st.error(f"Image file not found at {image_path}")
+
+    # Load the model
+    model_path = os.path.join(current_dir, 'notebook', 'model.sav')
+    if os.path.exists(model_path):
+        model = joblib.load(model_path)
+        st.write("Model loaded successfully!")
+    else:
+        st.error(f"Model file not found at {model_path}")
+
+    # Your additional Streamlit code here
+	
+    #Setting Application title
+ #    st.title('Telco Customer Churn Prediction App')
+
+ #      #Setting Application description
+ #    st.markdown("""
+ #     :dart:  This Streamlit app is made to predict customer churn in a ficitional telecommunication use case.
+ #    The application is functional for both online prediction and batch data prediction. \n
+ #    """)
+ #    st.markdown("<h3></h3>", unsafe_allow_html=True)
+
+ #    #Setting Application sidebar default
+ #    image = Image.open('App.jpg')
+ #    add_selectbox = st.sidebar.selectbox(
+	# "How would you like to predict?", ("Online", "Batch"))
+ #    st.sidebar.info('This app is created to predict Customer Churn')
+ #    st.sidebar.image(image)
 
     if add_selectbox == "Online":
         st.info("Input data below")
