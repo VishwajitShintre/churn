@@ -1,12 +1,8 @@
-#Import libraries
+# Import libraries
 import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
-
-#load the model from disk
-# import joblib
-# model = joblib.load(r"./notebook/model.sav")
 import joblib
 import os
 
@@ -17,14 +13,8 @@ model_path = os.path.join(current_dir, 'notebook', 'model.sav')
 # Load the model
 model = joblib.load(model_path)
 
-
-#Import python scripts
+# Import python scripts
 from preprocessing import preprocess
-
-# def main():
-import streamlit as st
-from PIL import Image
-import os
 
 def main():
     st.title('Telco Customer Churn Prediction App')
@@ -48,32 +38,29 @@ def main():
     else:
         st.error(f"Model file not found at {model_path}")
 
-    # Your additional Streamlit code here
-	
-    #Setting Application title
- #    st.title('Telco Customer Churn Prediction App')
+    # Setting Application title
+    st.title('Telco Customer Churn Prediction App')
 
- #      #Setting Application description
- #    st.markdown("""
- #     :dart:  This Streamlit app is made to predict customer churn in a ficitional telecommunication use case.
- #    The application is functional for both online prediction and batch data prediction. \n
- #    """)
- #    st.markdown("<h3></h3>", unsafe_allow_html=True)
+    # Setting Application description
+    st.markdown("""
+     :dart:  This Streamlit app is made to predict customer churn in a fictional telecommunication use case.
+    The application is functional for both online prediction and batch data prediction. \n
+    """)
+    st.markdown("<h3></h3>", unsafe_allow_html=True)
 
- #    #Setting Application sidebar default
- #    image = Image.open('App.jpg')
- #    add_selectbox = st.sidebar.selectbox(
-	# "How would you like to predict?", ("Online", "Batch"))
- #    st.sidebar.info('This app is created to predict Customer Churn')
- #    st.sidebar.image(image)
+    # Setting Application sidebar default
+    add_selectbox = st.sidebar.selectbox(
+        "How would you like to predict?", ("Online", "Batch")
+    )
+    st.sidebar.info('This app is created to predict Customer Churn')
+    st.sidebar.image(image)
 
     if add_selectbox == "Online":
         st.info("Input data below")
-        #Based on our optimal features selection
+        # Based on our optimal features selection
         st.subheader("Demographic data")
         seniorcitizen = st.selectbox('Senior Citizen:', ('Yes', 'No'))
         dependents = st.selectbox('Dependent:', ('Yes', 'No'))
-
 
         st.subheader("Payment data")
         tenure = st.slider('Number of months the customer has stayed with the company', min_value=0, max_value=72, value=0)
@@ -96,7 +83,7 @@ def main():
         data = {
                 'SeniorCitizen': seniorcitizen,
                 'Dependents': dependents,
-                'tenure':tenure,
+                'tenure': tenure,
                 'PhoneService': phoneservice,
                 'MultipleLines': mutliplelines,
                 'InternetService': internetservice,
@@ -107,7 +94,7 @@ def main():
                 'StreamingMovies': streamingmovies,
                 'Contract': contract,
                 'PaperlessBilling': paperlessbilling,
-                'PaymentMethod':PaymentMethod, 
+                'PaymentMethod': PaymentMethod, 
                 'MonthlyCharges': monthlycharges, 
                 'TotalCharges': totalcharges
                 }
@@ -117,8 +104,7 @@ def main():
         st.markdown("<h3></h3>", unsafe_allow_html=True)
         st.dataframe(features_df)
 
-
-        #Preprocess inputs
+        # Preprocess inputs
         preprocess_df = preprocess(features_df, 'Online')
 
         prediction = model.predict(preprocess_df)
@@ -128,32 +114,26 @@ def main():
                 st.warning('Yes, the customer will terminate the service.')
             else:
                 st.success('No, the customer is happy with Telco Services.')
-        
-
     else:
         st.subheader("Dataset upload")
         uploaded_file = st.file_uploader("Choose a file")
         if uploaded_file is not None:
             data = pd.read_csv(uploaded_file)
-            #Get overview of data
+            # Get overview of data
             st.write(data.head())
             st.markdown("<h3></h3>", unsafe_allow_html=True)
-            #Preprocess inputs
+            # Preprocess inputs
             preprocess_df = preprocess(data, "Batch")
             if st.button('Predict'):
-                #Get batch prediction
+                # Get batch prediction
                 prediction = model.predict(preprocess_df)
                 prediction_df = pd.DataFrame(prediction, columns=["Predictions"])
-                prediction_df = prediction_df.replace({1:'Yes, the customer will terminate the service.', 
-                                                    0:'No, the customer is happy with Telco Services.'})
+                prediction_df = prediction_df.replace({1: 'Yes, the customer will terminate the service.', 
+                                                       0: 'No, the customer is happy with Telco Services.'})
 
                 st.markdown("<h3></h3>", unsafe_allow_html=True)
                 st.subheader('Prediction')
                 st.write(prediction_df)
-            
+
 if __name__ == '__main__':
-        main()
-
-
-
-
+    main()
